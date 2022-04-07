@@ -1,9 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CartItem, CartService } from '@bluebites/orders';
-import { Subject, takeUntil } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { Product } from '../../models/product';
 import { ProductsService } from '../../services/products.service';
+import { SetSelectedProduct } from '../../store/actions/product.action';
+import { ProductState } from '../../store/state/product.state';
 
 @Component({
   selector: 'products-product-page',
@@ -17,7 +20,14 @@ export class ProductPageComponent implements OnInit, OnDestroy {
   endSubs$: Subject<any> = new Subject();
   quantity = 1;
 
-  constructor(private productService: ProductsService, private route: ActivatedRoute, private cartService: CartService) { }
+  @Select(ProductState.selectedProduct)selectedProduct$!: Observable<Product>;
+
+  constructor(
+    private productService: ProductsService,
+    private route: ActivatedRoute,
+    private cartService: CartService,
+    private store: Store
+    ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params =>{
@@ -28,8 +38,12 @@ export class ProductPageComponent implements OnInit, OnDestroy {
   }
 
   private _getProduct(id: string) {
-    this.productService.getProduct(id).pipe(takeUntil(this.endSubs$)).subscribe(resProduct =>{
-      this.product = resProduct;
+    // this.productService.getProduct(id).pipe(takeUntil(this.endSubs$)).subscribe(resProduct =>{
+    //   this.product = resProduct;
+    // });
+    this.store.dispatch(new SetSelectedProduct(id));
+    this.selectedProduct$.subscribe(selcProd => {
+      this.product = selcProd;
     });
   }
 

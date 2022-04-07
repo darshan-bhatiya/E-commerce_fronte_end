@@ -15,6 +15,9 @@ import {InputNumberModule} from 'primeng/inputnumber';
 
 import { ProductPageComponent } from './pages/product-page/product-page.component';
 import { UiModule } from '@bluebites/ui';
+//NGSX
+import { NgxsModule } from '@ngxs/store';
+import { ProductState } from './store/state/product.state';
 
 const routes: Routes =[
     {
@@ -40,7 +43,9 @@ const routes: Routes =[
         RatingModule,
         InputNumberModule,
         FormsModule,
-        UiModule
+        UiModule, 
+        //NGSX
+        NgxsModule.forRoot([ProductState]),
     ],
     declarations: [
         ProductsSearchComponent,
